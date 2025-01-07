@@ -12,8 +12,8 @@ taskgraph:
     register: translations_taskgraph:register
     decision-parameters: "translations_taskgraph.parameters:get_decision_parameters"
     repositories:
-        firefox_translations_training:
-            name: "firefox-translations-training"
+        translations:
+            name: "translations"
 
 # The list of valid stages that can be used with `target-stage and `start-stage`.
 # These get attached to tasks in `kinds`.
