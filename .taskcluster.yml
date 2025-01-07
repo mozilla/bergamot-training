@@ -225,6 +225,7 @@ tasks:
     
                               features:
                                   taskclusterProxy: true
+                                  chainOfTrust: true
     
                               image: mozillareleases/taskgraph:decision-v11.0.0@sha256:8c57e30214c85625856479812e63212dc2873b1ffcd97467a7c93508cbb3075a
                               maxRunTime: 1800
