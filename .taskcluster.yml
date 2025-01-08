@@ -42,7 +42,7 @@ tasks:
               $switch:
                   'tasks_for[:19] == "github-pull-request"': ${event.pull_request.base.ref}
                   'tasks_for == "github-push" && event.base_ref': ${event.base_ref}
-                  'tasks_for == "github-push"': ${event.ref}
+                  'tasks_for == "github-push" && !(event.base_ref)': ${event.ref}
                   'tasks_for in ["cron", "action"]': '${push.branch}'
                   'tasks_for == "pr-action"': '${push.base_branch}'
           head_ref:
@@ -225,6 +225,7 @@ tasks:
     
                               features:
                                   taskclusterProxy: true
+                                  chainOfTrust: true
     
                               image: mozillareleases/taskgraph:decision-v11.0.0@sha256:8c57e30214c85625856479812e63212dc2873b1ffcd97467a7c93508cbb3075a
                               maxRunTime: 1800

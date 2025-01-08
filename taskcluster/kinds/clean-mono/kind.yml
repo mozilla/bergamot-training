@@ -56,6 +56,7 @@ task-defaults:
             - fetches
             - run.command
     worker:
+        chain-of-trust: true
         docker-image: {"in-tree": "train"}
         # 7 days. yes, it can take a while to clean a huge dataset
         max-run-time: 604800
