@@ -1,10 +1,6 @@
 FROM $DOCKER_IMAGE_PARENT
 LABEL maintainer="Mozilla Release Engineering <release+docker@mozilla.com>"
 
-RUN curl -L https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb > /tmp/cuda-keyring.deb \
-    && dpkg -i /tmp/cuda-keyring.deb \
-    && rm /tmp/cuda-keyring.deb
-
 RUN apt-get update -qq \
     && apt-get install -y python3-numpy \
                           python3-fasttext \
@@ -20,19 +16,16 @@ RUN apt-get update -qq \
                           wget \
                           pkg-config \
                           libicu-dev \
-                          cuda-toolkit \
                           software-properties-common \
     && apt-get clean
 
-RUN curl -L https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin > /tmp/cuda.pin \
-    && mv /tmp/cuda.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
-    && apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub \
-    && add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" \
+# Install the same cuda version that the worker host uses
+# See https://github.com/mozilla-platform-ops/worker-images/blob/main/scripts/linux/ubuntu-2404-amd64-headless/fxci/05-nvidia-gcp-driver-cudnn.sh
+RUN curl -sSO https://developer.download.nvidia.com/compute/cudnn/9.5.1/local_installers/cudnn-local-repo-ubuntu2204-9.5.1_1.0-1_amd64.deb \
+    && dpkg -i cudnn-local-repo-ubuntu2204-9.5.1_1.0-1_amd64.deb \
+    && cp /var/cudnn-local-repo-ubuntu2204-9.5.1/cudnn-*-keyring.gpg /usr/share/keyrings/ \
     && apt-get update -qq \
-    && apt-get install -y cudnn9-cuda-12 \
-                          libcudnn9-dev-cuda-12 \
-    && apt-get clean
-
+    && apt-get install -y cudnn
 
 VOLUME /builds/worker/checkouts
 VOLUME /builds/worker/.cache
