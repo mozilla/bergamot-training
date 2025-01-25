@@ -54,9 +54,10 @@ tasks:
 
         worker-type: b-gpu
         worker:
+            docker-image: {"in-tree": "train"}
             artifacts:
                 - name: public/build
-                  path: artifacts
+                  path: /builds/worker/artifacts
                   type: directory
             max-run-time: 2592000
             env:
@@ -84,12 +85,14 @@ tasks:
 
         run:
             using: run-task
+            cache-dotcache: true
             command:
                 - bash
                 - -c
                 - >-
                     export PATH=$PATH:~/.local/bin &&
                     export PYTHONPATH=$PYTHONPATH:$VCS_PATH &&
+                    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$MOZ_FETCHES_DIR/cuda-toolkit/lib64" &&
                     pip install --upgrade pip &&
                     pip install -r $VCS_PATH/pipeline/eval/requirements/eval.txt &&
                     pip install $VCS_PATH/tracking &&
@@ -102,7 +105,7 @@ tasks:
                     --vocab             "$MOZ_FETCHES_DIR/vocab.spm"
                     --shortlist         "$MOZ_FETCHES_DIR/lex.s2t.pruned"
                     --artifacts_prefix  "$TASK_WORKDIR/artifacts/{dataset_sanitized}"
-                    --marian_config     "$TASK_WORKDIR/$VCS_PATH/pipeline/quantize/decoder.yml"
+                    --marian_config     "$VCS_PATH/pipeline/quantize/decoder.yml"
                     --marian            "$BMT_MARIAN"
                     --gpus              "$GPUS"
                     --model_variant     quantized
@@ -129,3 +132,4 @@ tasks:
                 # Quantized models are only supported via the browsermt fork of Marian.
                 # https://github.com/browsermt/marian-dev
                 - browsermt-marian
+                - cuda-toolkit

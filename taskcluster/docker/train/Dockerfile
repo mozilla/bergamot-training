@@ -16,7 +16,8 @@ RUN apt-get update -qq \
                           wget \
                           pkg-config \
                           libicu-dev \
+                          software-properties-common \
     && apt-get clean
 
-
 VOLUME /builds/worker/checkouts
+VOLUME /builds/worker/.cache
